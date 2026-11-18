@@ -3,7 +3,12 @@ import { Inventory } from './inventory';
 import { type Actor, requireThat, mass, text } from '../../shared/contracts';
 import { permit } from '../../shared/permissions';
 export class Routing {
-  constructor(public s: Store, public inv: Inventory) {}
+  public inv: Inventory;
+  public s: Store;
+  constructor(s: Store, inv: Inventory) {
+    this.s = s;
+    this.inv = inv;
+  }
   command(a: Actor, b: any) {
     permit(a, 'robotics');
     this.inv.eligible(a, b.lotId);

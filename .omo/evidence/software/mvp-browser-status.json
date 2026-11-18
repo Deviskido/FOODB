@@ -1,0 +1,9 @@
+{
+  "status": "not_completed",
+  "method": "Cached Playwright Core 1.63.0 with installed Google Chrome",
+  "stage": "browser_launch",
+  "observedExitSignal": "SIGABRT",
+  "observedCleanupError": "kill EPERM",
+  "screenshotsProduced": 0,
+  "note": "The browser exited before a page could be inspected. This is not a successful browser QA result."
+}

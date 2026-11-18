@@ -15,3 +15,13 @@ export async function request(path: string, body?: unknown) {
 export async function api(path: string, body?: unknown) {
   return (await request(path, body)).data;
 }
+export async function listAll(resource: string) {
+  const rows: any[] = [];
+  let cursor: string | undefined;
+  do {
+    const result = await request(resource + '?limit=100' + (cursor ? '&cursor=' + encodeURIComponent(cursor) : ''));
+    rows.push(...result.data);
+    cursor = result.nextCursor;
+  } while (cursor);
+  return rows;
+}

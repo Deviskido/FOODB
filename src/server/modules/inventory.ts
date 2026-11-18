@@ -2,7 +2,10 @@ import { Store } from '../db';
 import { type Actor, requireThat, mass, text } from '../../shared/contracts';
 import { permit } from '../../shared/permissions';
 export class Inventory {
-  constructor(public s: Store) {}
+  public s: Store;
+  constructor(s: Store) {
+    this.s = s;
+  }
   stock(a: Actor, id: string) {
     this.s.get('lots', a.orgId, id);
     const onHand = this.s.one('SELECT coalesce(sum(quantity_mg),0) n FROM inventory_events WHERE org_id=? AND lot_id=?', a.orgId, id).n;
@@ -48,7 +51,7 @@ export class Inventory {
     const lot = this.s.add('lots', a, {
       ...b,
       origin: this.s.mode,
-      commodity: b.commodity ?? 'tomato',
+      commodity: text(b.commodity ?? 'tomato','Commodity'),
       provenance: b.provenance ?? 'unknown'
     }, 'received');
     this.move(a, lot.id, quantity, 'receive', lot.id, b.locationId);

@@ -3,7 +3,12 @@ import { Inventory } from './inventory';
 import { type Actor, attributes, units, requireThat, text, number, date } from '../../shared/contracts';
 import { permit } from '../../shared/permissions';
 export class Quality {
-  constructor(public s: Store, public inventory: Inventory) {}
+  public inventory: Inventory;
+  public s: Store;
+  constructor(s: Store, inventory: Inventory) {
+    this.s = s;
+    this.inventory = inventory;
+  }
   observe(a: Actor, b: any) {
     permit(a, 'quality');
     this.s.get('lots', a.orgId, b.lotId);

@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 export const roles = ['owner', 'quality', 'robotics', 'chef', 'kitchen', 'commercial', 'delivery', 'safety', 'viewer'] as const;
 export type Role = typeof roles[number];
 export type Mode = 'operational' | 'simulation';
@@ -31,8 +32,12 @@ export const units: Record<string, string[]> = {
   ripeness: ['category']
 };
 export class AppError extends Error {
-  constructor(public status: number, public code: string, message: string) {
+  public code: string;
+  public status: number;
+  constructor(status: number, code: string, message: string) {
     super(message);
+    this.status = status;
+    this.code = code;
   }
 }
 export function requireThat(condition: unknown, message: string, status = 422, code = 'CONSTRAINT'): asserts condition {
@@ -61,6 +66,6 @@ export function canonical(value: unknown): string {
   if (value && typeof value === 'object') return '{' + Object.keys(value).sort().map(k => JSON.stringify(k) + ':' + canonical((value as Record<string, unknown>)[k])).join(',') + '}';
   return JSON.stringify(value) ?? 'null';
 }
-export function hash(value: string): string {
-  return new Bun.CryptoHasher('sha256').update(value).digest('hex');
+export function hash(value: string | Uint8Array): string {
+  return createHash('sha256').update(value).digest('hex');
 }

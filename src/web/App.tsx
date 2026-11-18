@@ -1,8 +1,9 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import Mvp from './pages/Mvp';
 import { RepeatField } from './components/RepeatField';
-import { api, request } from './api';
+import { api, request, listAll } from './api';
 import { forms, actionForms, prepare, type Field } from './forms';
-const navigation = [['overview', 'Overview', '◈'], ['lots', 'Receiving', '▦'], ['observations', 'Measurements', '⌁'], ['specifications', 'Quality', '◎'], ['inventory', 'Inventory', '▤'], ['routing', 'Routing', '⇄'], ['recipes', 'Recipes', '▧'], ['production', 'Production', '◷'], ['licenses', 'Licensing', '◇'], ['orders', 'Orders & delivery', '↗'], ['analytics', 'Analytics', '▥'], ['administration', 'Administration', '⚙']];
+const navigation = [['mvp', 'MVP 작업대', '◉'], ['overview', 'Overview', '◈'], ['lots', 'Receiving', '▦'], ['observations', 'Measurements', '⌁'], ['specifications', 'Quality', '◎'], ['inventory', 'Inventory', '▤'], ['routing', 'Routing', '⇄'], ['recipes', 'Recipes', '▧'], ['production', 'Production', '◷'], ['licenses', 'Licensing', '◇'], ['orders', 'Orders & delivery', '↗'], ['analytics', 'Analytics', '▥'], ['administration', 'Administration', '⚙']];
 const groups: Record<string, string[]> = {
   lots: ['lots', 'suppliers', 'samples', 'locations'],
   observations: ['observations', 'calibrations', 'models'],
@@ -15,7 +16,18 @@ const groups: Record<string, string[]> = {
   analytics: ['costs', 'evaluations'],
   administration: ['users', 'devices', 'audit', 'evidence', 'retention-policy', 'organizations']
 };
+const mvpTabs: Record<string, string[]> = {
+  lots: ['lots', 'suppliers', 'locations'],
+  observations: ['observations', 'calibrations'],
+  inventory: ['inventory'],
+  specifications: ['specifications', 'decisions', 'holds'],
+  recipes: ['recipes'],
+  production: ['production'],
+  administration: ['users', 'audit', 'evidence', 'retention-policy', 'organizations']
+};
+const corePages = new Set(['mvp', 'lots', 'observations', 'specifications', 'inventory', 'recipes', 'production', 'administration']);
 const titles: Record<string, string> = {
+  mvp: 'MVP 작업대',
   observations: 'Measurements',
   specifications: 'Quality specifications',
   lots: 'Receiving',
@@ -24,7 +36,7 @@ const titles: Record<string, string> = {
   production: 'Kitchen production'
 };
 const routeState = () => {
-  const [path, query] = (location.hash.slice(2) || 'overview').split('?');
+  const [path, query] = (location.hash.slice(2) || 'mvp').split('?');
   return {
     page: path.split('/')[0],
     params: new URLSearchParams(query)
@@ -68,7 +80,7 @@ function DataForm({
     [options, setOptions] = useState<Record<string, any[]>>({});
   useEffect(() => {
     let alive = true;
-    Promise.all([...new Set(fields.flatMap(f => f.source ? [f.source] : []))].map(async source => [source, await api(source + '?limit=100')] as const)).then(entries => {
+    Promise.all([...new Set(fields.flatMap(f => f.source ? [f.source] : []))].map(async source => [source, await listAll(source)] as const)).then(entries => {
       if (alive) setOptions(Object.fromEntries(entries));
     }).catch(e => {
       if (alive) setError(e.message);
@@ -349,7 +361,7 @@ function Records({
       const state = routeState();
       state.params.delete('record');
       history.replaceState(null, '', '#/' + state.page + '?' + state.params);
-    }} canEdit={editable || session.roles.includes('quality') && resource === 'products'} />}</>;
+    }} canEdit={editable || session.roles.includes('chef') && resource === 'production' || session.roles.includes('quality') && resource === 'products'} />}</>;
 }
 export default function App() {
   const [session, setSession] = useState<any>(null),
@@ -360,7 +372,8 @@ export default function App() {
     [tab, setTab] = useState(() => routeState().params.get('tab') ?? ''),
     [metrics, setMetrics] = useState<any>(null),
     [version, setVersion] = useState(0),
-    [menu, setMenu] = useState(false);
+    [menu, setMenu] = useState(false),
+    [extensions, setExtensions] = useState(() => !corePages.has(routeState().page));
   async function refresh() {
     try {
       const state = await api('setup');
@@ -401,10 +414,10 @@ export default function App() {
       refresh();
     }}>Try again</button></div>;
   if (!session) return <Identity setup={setup} onDone={refresh} />;
-  return <div className="app"><aside className={menu ? 'sidebar open' : 'sidebar'}><a className="brand" href="#/overview">FOODB<span>PRODUCE INTELLIGENCE</span></a><p className="nav-label">WORKSPACE</p><nav>{navigation.map(([path, label, icon]) => <a key={path} href={'#/' + path} className={route === path ? 'active' : ''} aria-current={route === path ? 'page' : undefined}><span>{icon}</span>{label}</a>)}</nav><div className="sidebar-bottom"><span className="online-dot" /> Local workspace<p>{session.organization}</p><small>{session.roles.join(' · ')}</small></div></aside><div className="workspace"><header><button className="menu-button secondary" onClick={() => setMenu(!menu)} aria-expanded={menu} aria-label="Toggle navigation">☰</button><div className="breadcrumb">Workspace <span>/</span> <strong>{titles[route] ?? human(route)}</strong></div><div className="header-right"><span className="avatar">{session.name.slice(0, 1).toUpperCase()}</span><span>{session.name}</span><button className="text-button" onClick={async () => {
+  return <div className="app"><aside className={menu ? 'sidebar open' : 'sidebar'}><a className="brand" href="#/mvp">FOODB<span>PRODUCE INTELLIGENCE</span></a><p className="nav-label">WORKSPACE</p><nav>{navigation.filter(([path]) => extensions || corePages.has(path)).map(([path, label, icon]) => <a key={path} href={'#/' + path} className={route === path ? 'active' : ''} aria-current={route === path ? 'page' : undefined}><span>{icon}</span>{label}</a>)}</nav><button className="text-button" onClick={() => setExtensions(v => !v)}>{extensions ? '확장 기능 접기' : '확장 기능 보기 (MVP 이후)'}</button><div className="sidebar-bottom"><span className="online-dot" /> Local workspace<p>{session.organization}</p><small>{session.roles.join(' · ')}</small></div></aside><div className="workspace"><header><button className="menu-button secondary" onClick={() => setMenu(!menu)} aria-expanded={menu} aria-label="Toggle navigation">☰</button><div className="breadcrumb">Workspace <span>/</span> <strong>{titles[route] ?? human(route)}</strong></div><div className="header-right"><span className="avatar">{session.name.slice(0, 1).toUpperCase()}</span><span>{session.name}</span><button className="text-button" onClick={async () => {
             await api('auth/logout', {});
             setSession(null);
-          }}>Sign out</button></div></header><main><div className="page-heading"><div><p className="eyebrow">FOODB / OPERATIONS</p><h1>{titles[route] ?? human(route)}</h1></div><button className="secondary" onClick={() => setVersion(v => v + 1)}>↻ Refresh</button></div>{session.mode === 'simulation' && <div className="simulation">SIMULATION WORKSPACE · Synthetic records do not establish physical or food-quality validation.</div>}{error && <ErrorBox message={error} />}{route === 'overview' ? <Overview metrics={metrics} go={go} /> : <>{groups[route] && <div className="tabs" role="navigation" aria-label="Module sections">{groups[route].map(t => <button className={resource === t ? 'selected' : ''} key={t} onClick={() => {
+          }}>Sign out</button></div></header><main><div className="page-heading"><div><p className="eyebrow">FOODB / OPERATIONS</p><h1>{titles[route] ?? human(route)}</h1></div><button className="secondary" onClick={() => setVersion(v => v + 1)}>↻ Refresh</button></div>{session.mode === 'simulation' && <div className="simulation">SIMULATION WORKSPACE · Synthetic records do not establish physical or food-quality validation.</div>}{error && <ErrorBox message={error} />}{route === 'mvp' ? <Mvp session={session} version={version} /> : route === 'overview' ? <Overview metrics={metrics} go={go} /> : <>{groups[route] && <div className="tabs" role="navigation" aria-label="Module sections">{(extensions ? groups[route] : mvpTabs[route] ?? groups[route]).map(t => <button className={resource === t ? 'selected' : ''} key={t} onClick={() => {
               location.hash = '/' + route + '?tab=' + t;
             }}>{human(t)}</button>)}</div>}{route === 'analytics' && metrics && <div className="stats"><div className="stat"><span>Measurement validity</span><strong>{metrics.measurementValidity === null ? 'Unavailable' : Math.round(metrics.measurementValidity * 100) + '%'}</strong><small>All attempted observations included</small></div><div className="stat"><span>Decision coverage</span><strong>{metrics.decisionCoverage === null ? 'Unavailable' : Math.round(metrics.decisionCoverage * 100) + '%'}</strong><small>Review outcomes remain in denominator</small></div><div className="stat"><span>Recorded costs</span><strong>{Object.entries(metrics.costByCurrency).map(([c, n]) => `${c} ${(Number(n) / 100).toFixed(2)}`).join(' · ') || 'Unavailable'}</strong><small>Only entered cost records</small></div></div>}{route === 'administration' && <div className="admin-tools"><button className="secondary" onClick={async () => {
               try {

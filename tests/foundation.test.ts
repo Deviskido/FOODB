@@ -1,6 +1,6 @@
 import { test } from 'bun:test';
 import assert from 'node:assert/strict';
-import { Database } from 'bun:sqlite';
+import { Database } from '../src/server/sqlite';
 import { join } from 'node:path';
 import { fixture, lot } from './helpers';
 test('SQLite rejects cross-tenant evidence identities even when bypassing the HTTP validation layer', async () => {

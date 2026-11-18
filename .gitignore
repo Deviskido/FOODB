@@ -6,3 +6,5 @@ dist/
 *.sqlite*
 snapshots/
 restored-data/
+mvp-data/
+mvp-demo-data/

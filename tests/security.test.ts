@@ -1,6 +1,6 @@
 import { test } from 'bun:test';
 import assert from 'node:assert/strict';
-import { Database } from 'bun:sqlite';
+import { Database } from '../src/server/sqlite';
 import { join } from 'node:path';
 import { fixture } from './helpers';
 test('a previously successful mutation cannot bypass a subsequently revoked role through replay', async () => {

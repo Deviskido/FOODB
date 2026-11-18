@@ -1,0 +1,7 @@
+{
+  "exitCode": 1,
+  "signal": null,
+  "stdout": "",
+  "stderr": "서버 실행 실패: EPERM — 포트 또는 실행 환경 권한을 확인하세요.\n",
+  "lockRemoved": true
+}

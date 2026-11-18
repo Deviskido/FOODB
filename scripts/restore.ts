@@ -1,7 +1,7 @@
-import { Database } from 'bun:sqlite';
+import { Database } from '../src/server/sqlite';
 import { mkdirSync, existsSync, readFileSync, copyFileSync, writeFileSync } from 'node:fs';
 import { resolve, join } from 'node:path';
-import { requireThat } from '../src/shared/contracts';
+import { hash,requireThat } from '../src/shared/contracts';
 export function restore(snapshot: string, destination: string, journalPath: string) {
   snapshot = resolve(snapshot);
   destination = resolve(destination);
@@ -13,7 +13,7 @@ export function restore(snapshot: string, destination: string, journalPath: stri
   requireThat(Array.isArray(manifest.files) && manifest.files.some((f: any) => f.path === 'app.sqlite'), 'Invalid snapshot manifest.');
   for (const file of manifest.files) {
     requireThat(file.path === 'app.sqlite' || /^evidence\/[a-f0-9-]{36}$/.test(file.path), 'Invalid manifest path.');
-    const digest = new Bun.CryptoHasher('sha256').update(readFileSync(join(snapshot, file.path))).digest('hex');
+    const digest = hash(new Uint8Array(readFileSync(join(snapshot, file.path))));
     requireThat(digest === file.checksum, 'Snapshot checksum verification failed.');
   }
   mkdirSync(join(destination, 'evidence'), {

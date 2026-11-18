@@ -1,0 +1,45 @@
+
+> foodb@0.1.0 verify:mvp
+> node --check src/mvp/app.js && node scripts/test-node.mjs
+
+✔ bounded ingredient adaptation reserves its adjusted mass; unsupported bounds abstain (185.812833ms)
+✔ recipe instructions cannot substitute an unapproved commodity (123.628834ms)
+✔ setup is one-time; login, session expiry and cross-origin checks are enforced (236.800625ms)
+✔ viewer cannot create lots or read recipes; other-tenant IDs return 404 (329.874959ms)
+✔ evidence signatures and tenant isolation are enforced before download (164.501875ms)
+✔ recipe form data creates an approvable version and action forms do not require creation fields (175.960666ms)
+✔ form conversion preserves missing measurements and rejects empty evaluation values (1.806084ms)
+✔ SQLite rejects cross-tenant evidence identities even when bypassing the HTTP validation layer (185.3465ms)
+✔ deletion disables account and preserves operational evidence (240.88275ms)
+✔ receive → reserve → cook → dispatch → delivery preserves stock, usage and withdrawal lineage (196.812125ms)
+✔ new safety hold blocks production without consuming reservations or generating usage (147.869042ms)
+✔ receiving is idempotent and persisted after reopening (179.345958ms)
+✔ lineage conserves mass and inherited safety holds prevent new transformations (127.152667ms)
+✔ revocation blocks new production and redacts adaptation contents (186.377084ms)
+✔ frozen monitoring policy suspends a model when paired-reference error fails (199.577083ms)
+✔ MVP fixed-recipe journey is persistent and retry-safe from reservation through finished inventory (198.576417ms)
+✔ MVP rejects held material and stale snapshots without leaving reservations or batches (195.43225ms)
+✔ MVP cancellation returns reserved mass; viewer summaries do not expose private instructions (238.3345ms)
+✔ MVP rechecks expired evidence before starting a prepared batch (137.702208ms)
+✔ MVP only accepts fixed recipes and does not partially reserve adaptive recipes (97.288584ms)
+✔ MVP aggregate is tenant scoped (96.5375ms)
+Request failed: Error
+✔ MVP rolls back approved proposal and stock reservation if batch insertion fails (82.757166ms)
+✔ a newer quality decision invalidates already prepared production (80.185625ms)
+✔ dependency-free MVP serves local assets and the real application API (42.732083ms)
+✔ portable password hashes verify without Bun and reject corruption (255.595917ms)
+✔ native SQLite adapter preserves outer transaction when a nested savepoint rolls back (2.040833ms)
+✔ classification distinguishes absent evidence, bounded uncertainty and expiry (263.266708ms)
+✔ MVP rejects impossible recipe yield and invalid commodity input before persistence (190.5535ms)
+✔ backup integrity, restore session revocation and recovery hold (250.695625ms)
+✔ acknowledgement never moves material; late duplicated physical outcome records once and retains hold (140.235791ms)
+✔ a previously successful mutation cannot bypass a subsequently revoked role through replay (265.794666ms)
+✔ device credentials are hashed at rest, including idempotency response storage (88.670834ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2245.824

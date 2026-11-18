@@ -1,12 +1,18 @@
-import { Database } from 'bun:sqlite';
+import { Database } from './sqlite';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { entities, sql } from './migrations/001-foundation';
 import { type Actor, type Mode, type RecordRow, requireThat, AppError } from '../shared/contracts';
 export type Entity = typeof entities[number];
 export class Store {
+  public clock: () => Date;
+  public mode: Mode;
+  public dataDir: string;
   db: Database;
-  constructor(public dataDir: string, public mode: Mode, public clock: () => Date) {
+  constructor(dataDir: string, mode: Mode, clock: () => Date) {
+    this.dataDir = dataDir;
+    this.mode = mode;
+    this.clock = clock;
     mkdirSync(join(dataDir, 'evidence'), {
       recursive: true,
       mode: 0o700

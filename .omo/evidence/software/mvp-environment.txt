@@ -1,0 +1,23 @@
+{
+  "mvp": {
+    "nodeVersion": "v26.5.0",
+    "nodeSupported": true,
+    "sqliteReady": true,
+    "frontendPresent": true,
+    "requiresPackageInstall": false
+  },
+  "bunExtension": {
+    "bunInstalled": false,
+    "missingPackages": [
+      "react",
+      "react-dom",
+      "typescript",
+      "@types/bun",
+      "@types/react",
+      "@types/react-dom"
+    ],
+    "lockfilePresent": false,
+    "runtimePinned": false
+  }
+}
+Node MVP 런타임 준비 완료: npm run verify:mvp → npm run start:mvp (포트/브라우저 권한은 별도 확인)

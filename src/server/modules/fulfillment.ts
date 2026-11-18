@@ -3,7 +3,12 @@ import { Inventory } from './inventory';
 import { type Actor, requireThat, text, mass, number } from '../../shared/contracts';
 import { permit } from '../../shared/permissions';
 export class Fulfillment {
-  constructor(public s: Store, public inv: Inventory) {}
+  public inv: Inventory;
+  public s: Store;
+  constructor(s: Store, inv: Inventory) {
+    this.s = s;
+    this.inv = inv;
+  }
   product(a: Actor, b: any) {
     permit(a, 'delivery', 'chef');
     text(b.name, 'Name');

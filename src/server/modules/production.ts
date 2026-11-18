@@ -4,7 +4,14 @@ import { Recipes } from './recipes';
 import { type Actor, requireThat, text, mass } from '../../shared/contracts';
 import { permit } from '../../shared/permissions';
 export class Production {
-  constructor(public s: Store, public inv: Inventory, public recipes: Recipes) {}
+  public recipes: Recipes;
+  public inv: Inventory;
+  public s: Store;
+  constructor(s: Store, inv: Inventory, recipes: Recipes) {
+    this.s = s;
+    this.inv = inv;
+    this.recipes = recipes;
+  }
   plan(a: Actor, b: any) {
     permit(a, 'kitchen');
     const p = this.s.get('adaptations', a.orgId, b.adaptationId);

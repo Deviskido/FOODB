@@ -4,13 +4,21 @@ import { Quality } from './quality';
 import { type Actor, requireThat, text, mass, number } from '../../shared/contracts';
 import { permit, readRecipes } from '../../shared/permissions';
 export class Recipes {
-  constructor(public s: Store, public inv: Inventory, public quality: Quality) {}
+  public quality: Quality;
+  public inv: Inventory;
+  public s: Store;
+  constructor(s: Store, inv: Inventory, quality: Quality) {
+    this.s = s;
+    this.inv = inv;
+    this.quality = quality;
+  }
   validate(b: any) {
     text(b.name, 'Recipe name');
     requireThat(Array.isArray(b.ingredients) && b.ingredients.length, 'Ingredients are required.', 400);
     for (const i of b.ingredients) {
       text(i.name, 'Ingredient');
       mass(i.quantityMg);
+      if (i.commodity !== undefined) text(i.commodity, 'Ingredient commodity');
     }
     requireThat(Array.isArray(b.steps) && b.steps.length, 'Steps are required.', 400);
     for (const step of b.steps) {
@@ -19,6 +27,7 @@ export class Recipes {
       if (step.temperatureC !== undefined) number(step.temperatureC, 'Temperature');
     }
     mass(b.yieldMg);
+    requireThat(b.yieldMg <= b.ingredients.reduce((total: number, i: any) => total + i.quantityMg, 0), 'Expected yield cannot exceed declared input mass.');
     requireThat(Array.isArray(b.allergens), 'Declare allergens, including an empty list when applicable.', 400);
     text(b.validatedDomain, 'Validated domain (use unvalidated when unknown)');
     for (const rule of b.rules ?? []) {
@@ -78,7 +87,9 @@ export class Recipes {
     };
   }
   inputQuality(a: Actor, lotId: string, decisionId?: string) {
-    const decision = decisionId ? this.s.get('quality_decisions', a.orgId, decisionId) : this.s.list('quality_decisions', a.orgId).find(d => d.lotId === lotId && d.scope === 'lot');
+    const latest = this.s.list('quality_decisions', a.orgId).find(d => d.lotId === lotId && d.scope === 'lot');
+    const decision = decisionId ? this.s.get('quality_decisions', a.orgId, decisionId) : latest;
+    if (decisionId) requireThat(latest?.id === decisionId, '품질 판정이 변경되었습니다. 준비된 생산을 취소하고 최신 판정으로 다시 준비하세요.', 409);
     requireThat(decision && decision.lotId === lotId && decision.status === 'suitable', 'A suitable lot-scoped quality decision is required.');
     const spec = this.s.get('specification_versions', a.orgId, decision.specificationVersionId);
     requireThat(spec.status === 'approved', 'The input specification is no longer approved.');

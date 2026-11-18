@@ -1,0 +1,36 @@
+✔ bounded ingredient adaptation reserves its adjusted mass; unsupported bounds abstain (162.138083ms)
+✔ recipe instructions cannot substitute an unapproved commodity (115.119834ms)
+✔ setup is one-time; login, session expiry and cross-origin checks are enforced (193.8505ms)
+✔ viewer cannot create lots or read recipes; other-tenant IDs return 404 (265.632625ms)
+✔ evidence signatures and tenant isolation are enforced before download (152.714042ms)
+✔ recipe form data creates an approvable version and action forms do not require creation fields (149.019375ms)
+✔ form conversion preserves missing measurements and rejects empty evaluation values (1.709708ms)
+✔ SQLite rejects cross-tenant evidence identities even when bypassing the HTTP validation layer (152.015833ms)
+✔ deletion disables account and preserves operational evidence (190.464291ms)
+✔ receive → reserve → cook → dispatch → delivery preserves stock, usage and withdrawal lineage (176.488917ms)
+✔ new safety hold blocks production without consuming reservations or generating usage (137.114834ms)
+✔ receiving is idempotent and persisted after reopening (148.038042ms)
+✔ lineage conserves mass and inherited safety holds prevent new transformations (116.554916ms)
+✔ revocation blocks new production and redacts adaptation contents (152.723709ms)
+✔ frozen monitoring policy suspends a model when paired-reference error fails (147.51675ms)
+Request failed: Error
+✔ MVP fixed-recipe journey is persistent and retry-safe from reservation through finished inventory (160.064041ms)
+✔ MVP rejects held material and stale snapshots without leaving reservations or batches (119.919916ms)
+✔ MVP cancellation returns reserved mass; viewer summaries do not expose private instructions (182.658542ms)
+✔ MVP rechecks expired evidence before starting a prepared batch (134.549875ms)
+✔ MVP only accepts fixed recipes and does not partially reserve adaptive recipes (81.318041ms)
+✔ MVP aggregate is tenant scoped (82.9695ms)
+✔ MVP rolls back approved proposal and stock reservation if batch insertion fails (89.158166ms)
+✔ classification distinguishes absent evidence, bounded uncertainty and expiry (194.511334ms)
+✔ backup integrity, restore session revocation and recovery hold (208.161833ms)
+✔ acknowledgement never moves material; late duplicated physical outcome records once and retains hold (154.679333ms)
+✔ a previously successful mutation cannot bypass a subsequently revoked role through replay (256.932917ms)
+✔ device credentials are hashed at rest, including idempotency response storage (89.096167ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1496.5165

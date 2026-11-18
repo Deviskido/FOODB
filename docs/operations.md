@@ -1,5 +1,7 @@
 # Operations
 
+> This reference originally describes the Bun extension. The dependency-free Node MVP runs with `npm run start:mvp`, stores data in `mvp-data`, and uses `npm run backup:mvp -- <source> <snapshot>` / `npm run restore:mvp -- <snapshot> <new-directory> <latest-deletion-journal>`. Its owner recovery confirmation is available directly in the MVP screen. See [MVP.md](MVP.md) for the current primary workflow.
+
 ## Configuration and storage
 
 | Variable | Default | Purpose |
@@ -37,7 +39,7 @@ Accounts use opaque, hashed-at-rest sessions, HttpOnly SameSite=Strict cookies, 
 4. Restore with `bun run restore <snapshot> <new-data-directory> <latest-deletions.json>`.
 5. Start the restored instance using `APP_DATA_DIR=<new-data-directory> bun run start`.
 6. Sign in as an existing owner. Verify stock, lineage, evidence and holds. Other roles cannot access a held recovery workspace.
-7. Submit `POST /api/v1/recovery/release` with a reconciliation reason through the owner session. This endpoint currently requires an API client; a guided recovery screen remains outstanding.
+7. Submit `POST /api/v1/recovery/release` with a reconciliation reason through the owner session. Use the owner recovery confirmation form on the Node MVP or React MVP screen, or this endpoint from an API client.
 
 Restore verifies every manifest checksum, invalidates human/device sessions, replays account deletion instructions, and sets the recovery hold. It never overwrites an existing directory. Backup uses a consistent SQLite `VACUUM INTO` snapshot and copies referenced evidence. Missing/corrupt files fail recovery. Data newer than the snapshot is not restored.
 

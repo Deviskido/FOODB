@@ -1,6 +1,8 @@
 # Implementation coverage and acceptance status
 
-The source implementation is not a declaration that all requirements in `.omo/plans/produce-intelligence-software.md` are complete. Native runtime, browser and Windows acceptance are blocked on dependencies unavailable to the sandbox. Existing planning artifacts remain unchanged.
+> Scope update (2026-11-18): the user requested a minimal MVP. The active delivery scope is now documented in [MVP.md](MVP.md); development status and deferred features are tracked in [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md). The full-product matrix below is retained as the expansion backlog, not the MVP acceptance checklist.
+
+The source implementation is not a declaration that all requirements in `.omo/plans/produce-intelligence-software.md` are complete. The Bun extension still lacks installed dependencies and native build acceptance. The dependency-free Node MVP now passes 32 native Node/SQLite tests; its actual browser and Windows acceptance remain unverified because the execution environment denies a loopback listener and Chrome launch failed. Existing planning artifacts remain unchanged.
 
 | Requirements | Implemented behavior | Evidence / remaining work |
 | --- | --- | --- |
@@ -30,10 +32,14 @@ The source implementation is not a declaration that all requirements in `.omo/pl
 | Economics | Entered costs by currency, validity/decision coverage, counts and stock from records | Zero-denominator handling implemented; full yield/waste/labor/contribution metrics outstanding |
 | Live gates | Simulation labeled and separated; no automatic physical/scientific validity claims | Dedicated commissioning approval workflow remains outstanding |
 
-## Verification performed
+## Earlier full-product verification (historical)
 
 - TypeScript/JSX sources parsed/transformed using a locally cached Babel implementation. This is a syntax check, not TypeScript typechecking.
 - 20 API/domain/form tests passed through a temporary offline compatibility harness. The harness transpiles the unchanged sources, substitutes Node's SQLite API for `bun:sqlite`, uses Node's test runner, and substitutes local cryptographic APIs for Bun APIs. It is not the shipping runtime or a native acceptance result.
-- The final source revision passed the synthetic dataset through direct HTTP-handler requests: 500 reads, 100 writes, five sessions, zero errors, read p95 about 32.06 ms, write p95 about 33.31 ms. This excludes native Bun serving and network transport; the checked-in native load script is the authoritative acceptance gate.
+- The pre-MVP source revision passed the synthetic dataset through direct HTTP-handler requests: 500 reads, 100 writes, five sessions, zero errors, read p95 about 32.06 ms, write p95 about 33.31 ms. This excludes native Bun serving and network transport; the checked-in native load script is the authoritative acceptance gate.
 
 See `.omo/evidence/software/offline-tests.txt` and `offline-load.txt` for recorded output. No browser screenshots, successful native build, pinned dependency versions, or Windows execution evidence are claimed.
+
+## Current MVP verification
+
+`npm run verify:mvp` passed with 32 tests against the shipping Node runtime adapter and actual SQLite/password implementations. See `mvp-native-node-tests.txt`. The Node path has no external package requirement and uses the same domain API. `mvp-listener-probe.json` records an EPERM listener failure with successful lock cleanup. No browser rendering, public deployment, Windows execution, or current MVP performance result is claimed.

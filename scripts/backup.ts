@@ -1,4 +1,4 @@
-import { Database } from 'bun:sqlite';
+import { Database } from '../src/server/sqlite';
 import { mkdirSync, existsSync, copyFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { hash, requireThat } from '../src/shared/contracts';
@@ -29,7 +29,7 @@ export function backup(source: string, destination: string) {
       createdAt: new Date().toISOString(),
       files: files.map(path => ({
         path,
-        checksum: new Bun.CryptoHasher('sha256').update(readFileSync(join(destination, path))).digest('hex')
+        checksum: hash(new Uint8Array(readFileSync(join(destination, path))))
       }))
     };
     writeFileSync(join(destination, 'manifest.json'), JSON.stringify(manifest, null, 2));

@@ -10,6 +10,7 @@ for (const cmd of commands) {
 const pkg = await Bun.file('package.json').json();
 pkg.packageManager = `bun@${Bun.version}`;
 pkg.engines = {
+  ...pkg.engines,
   bun: `=${Bun.version}`
 };
 await Bun.write('package.json', JSON.stringify(pkg, null, 2) + '\n');

@@ -1,4 +1,6 @@
-# Software implementation status
+# Initial implementation status (historical)
+
+Superseded for the minimal delivery by `docs/DEVELOPMENT_STATUS.md` and `mvp-native-node-tests.txt`: the Node MVP now has a package-free runtime and passes 32 native tests. The original limitations and compatibility-only results below are retained as historical evidence.
 
 Date: 2026-11-18
 

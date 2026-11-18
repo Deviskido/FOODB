@@ -15,6 +15,18 @@
     "backup": "bun scripts/backup.ts",
     "restore": "bun scripts/restore.ts",
     "load-test": "bun scripts/load-test.ts",
-    "setup": "bun scripts/setup.ts"
+    "setup": "bun scripts/setup.ts",
+    "doctor": "node scripts/doctor.mjs",
+    "test:mvp": "bun test --timeout 30000 ./tests/mvp.test.ts",
+    "verify": "bun run typecheck && bun test --timeout 30000 ./tests && bun run build",
+    "start:mvp": "node scripts/start-node.mjs",
+    "test:node": "node scripts/test-node.mjs",
+    "verify:mvp": "node --check src/mvp/app.js && node scripts/test-node.mjs",
+    "demo:mvp": "node scripts/start-node.mjs --simulation",
+    "backup:mvp": "node scripts/maintenance-node.mjs backup",
+    "restore:mvp": "node scripts/maintenance-node.mjs restore"
+  },
+  "engines": {
+    "node": ">=26 <27"
   }
 }

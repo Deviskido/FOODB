@@ -5,6 +5,7 @@ import { Quality } from './modules/quality';
 import { Routing } from './modules/routing';
 import { Recipes } from './modules/recipes';
 import { Production } from './modules/production';
+import { Mvp } from './modules/mvp';
 import { Fulfillment } from './modules/fulfillment';
 import { entities } from './migrations/001-foundation';
 import { AppError, type Actor, type Mode, type Role, requireThat, text, number, date, hash, canonical, roles } from '../shared/contracts';
@@ -28,6 +29,7 @@ export function createApp({
     recipes = new Recipes(s, inv, quality),
     production = new Production(s, inv, recipes),
     fulfillment = new Fulfillment(s, inv);
+  const mvp = new Mvp(s, inv, recipes, production);
   mkdirSync(join(dataDir, 'control'), {
     recursive: true,
     mode: 0o700
@@ -146,6 +148,10 @@ export function createApp({
     };
   }
   function authorizeMutation(a: Actor, resource: string, action?: string) {
+    if (resource === 'mvp') {
+      permit(a, 'chef');
+      permit(a, 'kitchen');
+    }
     const allowed: Record<string, Role[]> = {
       lots: ['quality', 'robotics'],
       lineage: ['robotics'],
@@ -184,6 +190,9 @@ export function createApp({
     const [resource, id, action] = parts;
     if (mode === 'operational' && ['lots', 'recipes', 'catalog', 'products'].includes(resource)) requireThat(s.one('SELECT value FROM metadata WHERE key=?', 'retention:' + a.orgId), 'Approve a retention policy in Administration before entering live business data.');
     switch (resource) {
+      case 'mvp':
+        requireThat(id === 'prepare', 'Unknown MVP action.', 404);
+        return mvp.prepare(a, b);
       case 'inventory':
         if (id && action === 'adjust') return inv.adjust(a, id, b);
         break;
@@ -707,9 +716,11 @@ export function createApp({
           };
           if (mime.startsWith('image/')) requireThat(signatures[mime] && signatures[mime].every((x, i) => bytes[i] === x) && (mime !== 'image/webp' || String.fromCharCode(...bytes.slice(8, 12)) === 'WEBP'), 'Image signature does not match media type.', 400);
           const evidenceId = crypto.randomUUID(),
-            checksum = new Bun.CryptoHasher('sha256').update(bytes).digest('hex'),
+            checksum = hash(bytes),
             name = text(req.headers.get('x-file-name') ?? 'attachment', 'Filename');
-          await Bun.write(join(dataDir, 'evidence', evidenceId), bytes);
+          writeFileSync(join(dataDir, 'evidence', evidenceId), bytes, {
+            mode: 0o600
+          });
           s.tx(() => {
             s.run('INSERT INTO evidence_files VALUES(?,?,?,?,?,?,?)', evidenceId, a.orgId, name, mime, checksum, bytes.length, s.now());
             s.audit(a, 'evidence.create', evidenceId);
@@ -723,7 +734,7 @@ export function createApp({
         if (id) {
           const e = s.one('SELECT * FROM evidence_files WHERE org_id=? AND id=?', a.orgId, id);
           requireThat(e, 'Evidence not found.', 404);
-          return new Response(Bun.file(join(dataDir, 'evidence', e.id)), {
+          return new Response(new Uint8Array(readFileSync(join(dataDir, 'evidence', e.id))), {
             headers: {
               'Content-Type': 'application/octet-stream',
               'Content-Disposition': 'attachment',
@@ -736,6 +747,7 @@ export function createApp({
       }
       if (resource === 'users' && !id && req.method === 'POST') return reply(await auth.createUser(a, b), 201);
       if (req.method === 'GET') {
+        if (resource === 'mvp') return reply(mvp.summary(a));
         if (resource === 'metrics') return reply(metrics(a));
         if (resource === 'inventory') return reply(s.list('lots', a.orgId).map(l => ({
           ...l,
