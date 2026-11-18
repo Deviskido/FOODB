@@ -1,0 +1,28 @@
+✔ bounded ingredient adaptation reserves its adjusted mass; unsupported bounds abstain (268.83575ms)
+✔ recipe instructions cannot substitute an unapproved commodity (133.048084ms)
+✔ setup is one-time; login, session expiry and cross-origin checks are enforced (297.175458ms)
+✔ viewer cannot create lots or read recipes; other-tenant IDs return 404 (271.18625ms)
+✔ evidence signatures and tenant isolation are enforced before download (241.082375ms)
+✔ recipe form data creates an approvable version and action forms do not require creation fields (223.137125ms)
+✔ form conversion preserves missing measurements and rejects empty evaluation values (1.156916ms)
+✔ SQLite rejects cross-tenant evidence identities even when bypassing the HTTP validation layer (246.531042ms)
+✔ deletion disables account and preserves operational evidence (210.922209ms)
+✔ receive → reserve → cook → dispatch → delivery preserves stock, usage and withdrawal lineage (177.916208ms)
+✔ new safety hold blocks production without consuming reservations or generating usage (122.826208ms)
+✔ receiving is idempotent and persisted after reopening (145.088209ms)
+✔ lineage conserves mass and inherited safety holds prevent new transformations (118.732084ms)
+✔ revocation blocks new production and redacts adaptation contents (158.849833ms)
+✔ frozen monitoring policy suspends a model when paired-reference error fails (142.063083ms)
+✔ classification distinguishes absent evidence, bounded uncertainty and expiry (210.316875ms)
+✔ backup integrity, restore session revocation and recovery hold (193.045958ms)
+✔ acknowledgement never moves material; late duplicated physical outcome records once and retains hold (138.526042ms)
+✔ a previously successful mutation cannot bypass a subsequently revoked role through replay (231.881125ms)
+✔ device credentials are hashed at rest, including idempotency response storage (62.619958ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1183.109458

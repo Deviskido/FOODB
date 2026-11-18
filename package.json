@@ -1,0 +1,20 @@
+{
+  "name": "foodb",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot src/server.ts",
+    "start": "bun src/server.ts",
+    "build": "bun build --compile ./src/server.ts --outfile ./dist/foodb",
+    "build:windows": "bun build --compile --target=bun-windows-x64 ./src/server.ts --outfile ./dist/produce-intelligence.exe",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test --timeout 30000 ./tests",
+    "demo": "bun scripts/seed-demo.ts",
+    "simulate": "bun src/simulator/device.ts",
+    "backup": "bun scripts/backup.ts",
+    "restore": "bun scripts/restore.ts",
+    "load-test": "bun scripts/load-test.ts",
+    "setup": "bun scripts/setup.ts"
+  }
+}

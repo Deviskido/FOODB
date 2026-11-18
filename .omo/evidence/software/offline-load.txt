@@ -1,0 +1,17 @@
+Seeded 250 lots
+Seeded 500 lots
+Seeded 750 lots
+Seeded 1000 lots
+{
+  "harness": "Offline Node/SQLite compatibility; direct HTTP handler, not Bun/loopback acceptance",
+  "runtime": "v26.5.0",
+  "host": "darwin arm64",
+  "lots": 1000,
+  "observations": 10000,
+  "sessions": 5,
+  "reads": 500,
+  "writes": 100,
+  "errors": 0,
+  "readP95Ms": 32.05608299999949,
+  "writeP95Ms": 33.31183299999975
+}
